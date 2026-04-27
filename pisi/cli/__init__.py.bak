@@ -137,7 +137,7 @@ class CLI(pisi.ui.UI):
         msg = str(msg)
         prompt = msg + pisi.util.colorize(' (%s)' % "/".join(opts), 'red')
         while True:
-            s = eval(input(prompt.encode('utf-8')))
+            s = input(prompt.encode('utf-8'))
             for opt in opts:
                 if opt.startswith(s):
                     return opt

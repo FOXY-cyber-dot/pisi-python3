@@ -988,7 +988,7 @@ class Builder:
                 add_path(path)
 
         files = pisi.files.Files()
-        for fileinfo in list(d.values()):
+        for fileinfo in d.values():
             files.append(fileinfo)
 
         files_xml_path = util.join_path(self.pkg_dir(), ctx.const.files_xml)

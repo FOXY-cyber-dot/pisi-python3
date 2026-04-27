@@ -23,7 +23,7 @@ class HistoryDB(lazydb.LazyDB):
         self.history = pisi.history.History()
 
     def __generate_history(self):
-        logs = list([x for x in os.listdir(ctx.config.history_dir()) if x.endswith(".xml")])
+        logs = list(filter(lambda x:x.endswith(".xml"), os.listdir(ctx.config.history_dir())))
         logs.sort(key=lambda x: int(x.split("_")[0]), reverse=True)
         return logs
 

@@ -82,7 +82,7 @@ class ItemByRepo:
             if not self.has_repo(r):
                 raise Exception(_('Repository %s does not exist.') % repo)
 
-            for item, data in list(self.dbobj[r].items()):
+            for item, data in self.dbobj[r].items():
                 yield item, zlib.decompress(data) if self.compressed else data
 
     def item_repos(self, repo=None):

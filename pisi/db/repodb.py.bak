@@ -218,7 +218,7 @@ class RepoDB(lazydb.LazyDB):
         return repos
 
     def list_repos(self, only_active=True):
-        return [x for x in self.repoorder.get_order() if (True if not only_active else self.repo_active(x))]
+        return filter(lambda x:True if not only_active else self.repo_active(x), self.repoorder.get_order())
 
     def list_repo_urls(self, only_active=True):
         repos = []
