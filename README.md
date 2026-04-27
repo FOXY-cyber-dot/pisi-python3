@@ -15,7 +15,7 @@ Python 3'e taşımak amacıyla başlatılmıştır.
 
 - [x] Python 3 uyumluluk analizi yapıldı
 - [x] `fissix` ile otomatik dönüşüm uygulandı (13 dosya)
-- [ ] `eval()` güvenlik açıkları düzeltilecek
+- [x] `eval()` ve `bytes/str` güvenlik açıkları düzeltildi (`pisi/cli/__init__.py`)
 - [ ] `coreutils.py` parse hatası giderilecek
 - [ ] Kapsamlı test yazılacak
 - [ ] Pardus 25 üzerinde çalıştırılacak
