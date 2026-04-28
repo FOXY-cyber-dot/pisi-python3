@@ -16,9 +16,30 @@ Python 3'e taşımak amacıyla başlatılmıştır.
 - [x] Python 3 uyumluluk analizi yapıldı
 - [x] `fissix` ile otomatik dönüşüm uygulandı (13 dosya)
 - [x] `eval()` ve `bytes/str` güvenlik açıkları düzeltildi (`pisi/cli/__init__.py`)
-- [x] `coreutils.py` parse hatası giderilecek
+- [x] `coreutils.py` parse hatası giderildi
+- [x] `api.py` geçersiz escape sequence düzeltildi (Python 3.12+ SyntaxWarning)
+- [ ] `piksemel` → `lxml` ile değiştirilecek (`pisi/pxml/xmlext.py` ve 7 bağımlı dosya)
 - [ ] Kapsamlı test yazılacak
 - [ ] Pardus 25 üzerinde çalıştırılacak
+
+## Kritik Engel: `piksemel`
+
+`piksemel`, Pardus'a özgü bir C-extension XML kütüphanesidir. PyPI veya apt üzerinden
+kurulumu mevcut değildir. `import pisi` çalışmaz hale getirmektedir.
+
+**Çözüm:** `pisi/pxml/xmlext.py` dosyasındaki piksemel API'si `lxml.etree` ile ikame edilecek.
+Etkilenen dosyalar (8 adet):
+
+| Dosya | Bağımlılık |
+| ----- | ---------- |
+| `pisi/pxml/xmlext.py` | `import piksemel` — ana adaptör |
+| `pisi/pxml/xmlfile.py` | xmlext üzerinden |
+| `pisi/pxml/autoxml.py` | xmlext üzerinden |
+| `pisi/db/packagedb.py` | doğrudan piksemel |
+| `pisi/db/installdb.py` | doğrudan piksemel |
+| `pisi/db/sourcedb.py` | doğrudan piksemel |
+| `pisi/db/repodb.py` | doğrudan piksemel |
+| `pisi/specfile.py` | doğrudan piksemel |
 
 ## Kurulum (Geliştirici)
 
