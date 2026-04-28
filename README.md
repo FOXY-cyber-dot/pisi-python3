@@ -16,7 +16,7 @@ Python 3'e taşımak amacıyla başlatılmıştır.
 - [x] Python 3 uyumluluk analizi yapıldı
 - [x] `fissix` ile otomatik dönüşüm uygulandı (13 dosya)
 - [x] `eval()` ve `bytes/str` güvenlik açıkları düzeltildi (`pisi/cli/__init__.py`)
-- [ ] `coreutils.py` parse hatası giderilecek
+- [x] `coreutils.py` parse hatası giderilecek
 - [ ] Kapsamlı test yazılacak
 - [ ] Pardus 25 üzerinde çalıştırılacak
 
@@ -39,4 +39,4 @@ Bu proje aktif geliştirme aşamasındadır.
 Katkıda bulunmak isteyenler PR açabilir. 🚀
 
 ## Lisans
-GPL-3.0
+GPL-2.0
