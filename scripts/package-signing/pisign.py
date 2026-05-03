@@ -149,12 +149,12 @@ def verify_certificate(cert_file):
 
     pipe = subprocess.Popen(command, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
-    lines = pipe.stdout.read().split('\n')
+    lines = pipe.stdout.read().split(b'\n')
     if len(lines) < 2:
         return CERT_CORRUPTED
-    elif lines[1].startswith("error"):
+    elif lines[1].startswith(b"error"):
         code = lines[1].split()[1]
-        if code == '18':
+        if code == b'18':
             return CERT_SELF
         else:
             return CERT_CORRUPTED
@@ -235,14 +235,15 @@ def verify_data(data, signature_data, trust_dir):
             SIGN_OK, SIGN_NO, SIGN_SELF or SIGN_CORRUPTED
     """
     # Check header
-    if not len(signature_data) or not signature_data.startswith(HEADER):
+    header_bytes = HEADER.encode()
+    if not len(signature_data) or not signature_data.startswith(header_bytes):
         return SIGN_NO
     else:
         try:
-            header, cert_ascii, signature_ascii = signature_data.split(':')
+            header, cert_ascii, signature_ascii = signature_data.split(b':')
         except ValueError:
             return SIGN_CORRUPTED
-        if header != HEADER:
+        if header != header_bytes:
             return SIGN_CORRUPTED
         signature_binary = base64.b64decode(signature_ascii)
         cert_data = base64.b64decode(cert_ascii)
@@ -321,7 +322,7 @@ def verify_zipfile(filename, trust_dir=None):
     zip_obj.close()
 
     # Verify signed data
-    return verify_data(hashes, signature_data, trust_dir)
+    return verify_data(hashes.encode('utf-8'), signature_data, trust_dir)
 
 def sign_file(filename, key_file, cert_file, password_fd):
     """
@@ -333,7 +334,7 @@ def sign_file(filename, key_file, cert_file, password_fd):
             cert_file: Certificate
             password_fd: File that contains passphrase
     """
-    data = open(filename).read()
+    data = open(filename, 'rb').read()
     signed_binary = sign_data(data, key_file, password_fd)
     cert_data = open(cert_file).read()
 
@@ -341,7 +342,7 @@ def sign_file(filename, key_file, cert_file, password_fd):
     open('%s.%s' % (filename, EXT_CERT), 'w').write(cert_data)
 
     # Save signed data
-    open('%s.%s' % (filename, EXT_SIGN), 'w').write(signed_binary)
+    open('%s.%s' % (filename, EXT_SIGN), 'wb').write(signed_binary)
 
 def sign_zipfile(filename, key_file, cert_file, password_fd):
     """
@@ -357,15 +358,15 @@ def sign_zipfile(filename, key_file, cert_file, password_fd):
 
     # Get ZIP hashes and sign them
     hashes = get_zip_hashes(zip_obj)
-    signed_binary = sign_data(hashes, key_file, password_fd)
+    signed_binary = sign_data(hashes.encode('utf-8'), key_file, password_fd)
     signed_ascii = base64.b64encode(signed_binary)
 
     # Encode certificate
-    cert_data = open(cert_file).read()
+    cert_data = open(cert_file, 'rb').read()
     cert_ascii = base64.b64encode(cert_data)
 
     # Add signed data as ZIP comment
-    zip_obj.comment = '%s:%s:%s' % (HEADER, cert_ascii, signed_ascii)
+    zip_obj.comment = b':'.join([HEADER.encode(), cert_ascii, signed_ascii])
 
     # Mark file as modified and save it
     zip_obj._didModify = True
@@ -401,7 +402,7 @@ def main():
         if len(sys.argv[4:]):
             # Keep password in a temporary file
             password = getpass.getpass()
-            password_fd = os.tmpfile()
+            password_fd = tempfile.TemporaryFile(mode='w+')
             password_fd.write(password)
             password_fd.flush()
 

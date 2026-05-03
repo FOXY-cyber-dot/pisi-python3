@@ -13,7 +13,8 @@ authors = {}
 def get_author_name_mail(author):
     if not authors:
         accounts = urllib.request.urlopen(accounts_url)
-        for line in accounts:
+        for raw_line in accounts:
+            line = raw_line.decode('utf-8', errors='replace') if isinstance(raw_line, bytes) else raw_line
             if line.startswith("#"):
                 continue
             elif line.count(":") != 3:

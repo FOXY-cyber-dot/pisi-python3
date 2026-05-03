@@ -154,7 +154,7 @@ class RepoDB(lazydb.LazyDB):
 
     def get_repo_doc(self, repo_name):
         if not self.has_repo(repo_name):
-            raise RepoError(_("Repository %s does not exist.") % repo)
+            raise RepoError(_("Repository %s does not exist.") % repo_name)
 
         repo = self.get_repo(repo_name)
 

@@ -179,7 +179,7 @@ class Index(xmlfile.XmlFile, metaclass=autoxml.autoxml):
         if latest_packages:
             sorted_pkgs = {}
             for pkg in latest_packages:
-                key = re.search("\/((lib)?[\d\w])\/", pkg[0])
+                key = re.search(r"/((lib)?[\d\w])/", pkg[0])
                 key = key.group(1) if key else os.path.dirname(pkg[0])
                 try:
                     sorted_pkgs[key].append(pkg)

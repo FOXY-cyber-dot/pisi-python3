@@ -97,6 +97,8 @@ class SourceDB(lazydb.LazyDB):
             lang = pisi.pxml.autoxml.LocalText.get_lang()
         found = []
         for name, xml in self.sdb.get_items_iter(repo):
+            if isinstance(xml, bytes):
+                xml = xml.decode('utf-8', errors='replace')
             if terms == [term for term in terms if (fields['name'] and \
                     re.compile(term, re.I).search(name)) or \
                     (fields['summary'] and \

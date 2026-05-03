@@ -17,8 +17,6 @@ import sys
 import atexit
 import logging
 import logging.handlers
-from importlib import reload
-import importlib
 
 __version__ = "3.0.0-alpha1"
 
@@ -70,12 +68,6 @@ def _cleanup():
 
     ctx.ui.close()
     ctx.enable_keyboard_interrupts()
-
-# Hack for pisi to work with non-patched Python. pisi needs
-# lots of work for not doing this.
-
-
-importlib.reload(sys)
 
 atexit.register(_cleanup)
 

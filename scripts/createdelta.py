@@ -15,7 +15,7 @@ import glob
 import pisi
 import pisi.util as util
 from pisi.version import Version
-from pisi.delta import create_delta_package
+from pisi.operations.delta import create_delta_package
 
 def minsandmaxes():
 

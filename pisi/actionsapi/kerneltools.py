@@ -205,7 +205,7 @@ def installHeaders(extraHeaders=None):
     shelltools.makedirs(destination)
 
     # First create the skel
-    find_cmd = "find . -path %s -prune -o -type f \( -name %s \) -print" % \
+    find_cmd = r"find . -path %s -prune -o -type f \( -name %s \) -print" % \
                 (
                     " -prune -o -path ".join(["'./%s/*'" % l for l in pruned]),
                     " -o -name ".join(["'%s'" % k for k in wanted])

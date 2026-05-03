@@ -22,7 +22,6 @@
 # System
 import locale
 import types
-import formatter
 import sys
 import io
 import inspect
@@ -60,6 +59,40 @@ Float = float
 #        """entry point for metaclass code"""
 #        # standard initialization
 #        super(autoxml, cls).__init__(name, bases, dict)
+
+class _Writer:
+    """Simple text writer, replaces removed formatter.DumbWriter"""
+    def __init__(self, file=None, maxcol=78):
+        self.file = file or sys.stdout
+        self.maxcol = maxcol
+        self.col = 0
+        self.atbreak = 0
+
+    def send_literal_data(self, data):
+        self.file.write(data)
+        i = data.rfind('\n')
+        if i >= 0:
+            self.col = 0
+            data = data[i+1:]
+        data = data.expandtabs()
+        self.col = self.col + len(data)
+        self.atbreak = 0
+
+
+class _AbstractFormatter:
+    """Simple formatter, replaces removed formatter.AbstractFormatter"""
+    def __init__(self, writer):
+        self.writer = writer
+
+    def add_flowing_data(self, data):
+        self.writer.send_literal_data(data)
+
+    def add_literal_data(self, data):
+        self.writer.send_literal_data(data)
+
+    def add_line_break(self):
+        self.writer.send_literal_data('\n')
+
 
 class LocalText(dict):
     """Handles XML tags with localized text"""
@@ -102,8 +135,10 @@ class LocalText(dict):
         try:
             (lang, encoding) = locale.getlocale()
             if not lang:
-                (lang, encoding) = locale.getdefaultlocale()
-            if lang==None: # stupid python means it is C locale
+                lang = locale.setlocale(locale.LC_ALL, '')
+                if lang in ('', 'C', 'POSIX'):
+                    lang = None
+            if lang is None: # C locale
                 return 'en'
             else:
                 return lang[0:2]
@@ -135,8 +170,8 @@ class LocalText(dict):
 
     #FIXME: factor out these common routines
     def print_text(self, file = sys.stdout):
-        w = Writer(file) # plain text
-        f = formatter.AbstractFormatter(w)
+        w = _Writer(file) # plain text
+        f = _AbstractFormatter(w)
         errs = []
         self.format(f, errs)
         if errs:
@@ -156,21 +191,7 @@ class LocalText(dict):
         else:
             return str()
 
-class Writer(formatter.DumbWriter):
-    """adds unicode support"""
-
-    def __init__(self, file=None, maxcol=78):
-        formatter.DumbWriter.__init__(self, file, maxcol)
-
-    def send_literal_data(self, data):
-        self.file.write(data)
-        i = data.rfind('\n')
-        if i >= 0:
-            self.col = 0
-            data = data[i+1:]
-        data = data.expandtabs()
-        self.col = self.col + len(data)
-        self.atbreak = 0
+Writer = _Writer  # backward compat alias
 
 class autoxml(oo.autosuper, oo.autoprop):
     """High-level automatic XML transformation interface for xmlfile.
@@ -275,7 +296,7 @@ class autoxml(oo.autosuper, oo.autoprop):
         # read declaration order from source
         # code contributed by bahadir kandemir
         try:
-            fn = re.compile('\s*([tas]_[a-zA-Z]+).*').findall
+            fn = re.compile(r'\s*([tas]_[a-zA-Z]+).*').findall
 
             inspect.linecache.clearcache()
             lines = list(filter(fn, inspect.getsourcelines(cls)[0]))
@@ -381,8 +402,8 @@ class autoxml(oo.autosuper, oo.autoprop):
                 formatter(self, f, errs)
         cls.format = format
         def print_text(self, file = sys.stdout):
-            w = Writer(file) # plain text
-            f = formatter.AbstractFormatter(w)
+            w = _Writer(file) # plain text
+            f = _AbstractFormatter(w)
             errs = []
             self.format(f, errs)
             if errs:
@@ -567,7 +588,7 @@ class autoxml(oo.autosuper, oo.autoprop):
         def errors(self, where):
             """return errors in the object"""
             errs = []
-            if hasattr(self, name) and getattr(self, name) != None:
+            if hasattr(self, name) and getattr(self, name) is not None:
                 value = getattr(self,name)
                 errs.extend(errors_a(value, where + '.' + name))
             else:
@@ -589,7 +610,7 @@ class autoxml(oo.autosuper, oo.autoprop):
 
     def mixed_case(cls, identifier):
         """helper function to turn token name into mixed case"""
-        if identifier is "":
+        if identifier == "":
             return ""
         else:
             if identifier[0]=='I':

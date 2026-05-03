@@ -19,7 +19,7 @@ installdb = pisi.db.installdb.InstallDB()
 
 def ask_action(msg, actions, default):
     while True:
-        s = eval(input(msg))
+        s = input(msg)
         if len(s) == 0:
             return default
         else:

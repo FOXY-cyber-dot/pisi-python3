@@ -190,7 +190,7 @@ class Fetcher:
     def _get_headers(self):
         headers = []
         if self.url.auth_info():
-            enc = base64.encodestring('%s:%s' % self.url.auth_info())
+            enc = base64.encodebytes(('%s:%s' % self.url.auth_info()).encode()).decode().strip()
             headers.append(('Authorization', 'Basic %s' % enc))
         headers.append(('User-Agent', 'PiSi Fetcher/' + pisi.__version__))
         return headers

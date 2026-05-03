@@ -52,7 +52,7 @@ class RunTimeError(pisi.actionsapi.Error):
         ctx.ui.error(value)
 
 def get_config(config):
-    return os.popen("ruby -rrbconfig -e 'puts Config::CONFIG[\"%s\"]'" % config).read().strip()
+    return os.popen("ruby -rrbconfig -e 'puts RbConfig::CONFIG[\"%s\"]'" % config).read().strip()
 
 def get_ruby_version():
     return get_config('ruby_version')

@@ -52,18 +52,18 @@ class RunTimeError(pisi.actionsapi.Error):
 
 def configure(parameters = ''):
     '''does python setup.py configure'''
-    if system('python setup.py configure %s' % (parameters)):
+    if system('python3 setup.py configure %s' % (parameters)):
         raise ConfigureError(_('Configuration failed.'))
 
 
 def compile(parameters = ''):
     '''compile source with given parameters.'''
-    if system('python setup.py build %s' % (parameters)):
+    if system('python3 setup.py build %s' % (parameters)):
         raise CompileError(_('Make failed.'))
 
 def install(parameters = ''):
     '''does python setup.py install'''
-    if system('python setup.py install --root=%s --no-compile -O0 %s' % (get.installDIR(), parameters)):
+    if system('python3 setup.py install --root=%s --no-compile -O0 %s' % (get.installDIR(), parameters)):
         raise InstallError(_('Install failed.'))
 
     docFiles = ('AUTHORS', 'CHANGELOG', 'CONTRIBUTORS', 'COPYING*', 'COPYRIGHT',
@@ -77,7 +77,7 @@ def install(parameters = ''):
 
 def run(parameters = ''):
     '''executes parameters with python'''
-    if system('python %s' % (parameters)):
+    if system('python3 %s' % (parameters)):
         raise RunTimeError(_('Running %s failed.') % parameters)
 
 def fixCompiledPy(lookInto = '/usr/lib/%s/' % get.curPYTHON()):

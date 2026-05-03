@@ -17,9 +17,9 @@ import glob
 import sys
 import inspect
 import tempfile
-from distutils.core import setup
-from distutils.command.build import build
-from distutils.command.install import install
+from setuptools import setup
+from setuptools.command.build_py import build_py as build
+from setuptools.command.install import install
 
 sys.path.insert(0, '.')
 import pisi

@@ -40,8 +40,8 @@ class HistoryDB(lazydb.LazyDB):
     def load_config(self, operation, package):
         config_dir = os.path.join(ctx.config.history_dir(), "%03d" % operation, package)
         if os.path.exists(config_dir):
-            import distutils.dir_util as dir_util
-            dir_util.copy_tree(config_dir, "/")
+            import shutil
+            shutil.copytree(config_dir, "/", dirs_exist_ok=True)
 
     def save_config(self, package, config_file):
         hist_dir = os.path.join(ctx.config.history_dir(), self.history.operation.no, package)

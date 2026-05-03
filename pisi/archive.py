@@ -57,7 +57,7 @@ class _LZMAProxy(object):
             # Seeking here can cause problems with Python 2.7
             # if hasattr(self.fileobj, "seek"):
             #     self.fileobj.seek(0)
-            self.buf = ""
+            self.buf = b""
         else:
             self.lzmaobj = lzma.LZMACompressor()
 
@@ -186,8 +186,8 @@ class ArchiveBzip2(ArchiveBase):
 
         import bz2
         bz2_file = bz2.BZ2File(self.file_path, "r")
-        output = open(output_path, "w")
-        output.write(bz2_file.read().decode())
+        output = open(output_path, "wb")
+        output.write(bz2_file.read())
         output.close()
         bz2_file.close()
 
@@ -212,8 +212,8 @@ class ArchiveGzip(ArchiveBase):
 
         import gzip
         gzip_file = gzip.GzipFile(self.file_path, "r")
-        output = open(output_path, "w")
-        output.write(gzip_file.read().decode())
+        output = open(output_path, "wb")
+        output.write(gzip_file.read())
         output.close()
         gzip_file.close()
 
@@ -239,8 +239,8 @@ class ArchiveLzma(ArchiveBase):
 
         import lzma
         lzma_file = lzma.LZMAFile(self.file_path, "r")
-        output = open(output_path, "w")
-        output.write(lzma_file.read().decode())
+        output = open(output_path, "wb")
+        output.write(lzma_file.read())
         output.close()
         lzma_file.close()
 
